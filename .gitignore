@@ -1,0 +1,7 @@
+.vscode
+ishow
+fshow
+btest
+venv/
+.autograder_result
+result.txt
