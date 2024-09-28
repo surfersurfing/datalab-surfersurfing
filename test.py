@@ -61,7 +61,7 @@ class FunctionAnalyzer(c_ast.NodeVisitor):
 
     def check_type(self, node):
         if isinstance(node, c_ast.TypeDecl):
-            type_name = node.type.names[0]
+            type_name = " ".join(node.type.names)
             self.control_structures.append(type_name)
         elif isinstance(node, (c_ast.PtrDecl, c_ast.ArrayDecl)):
             self.check_type(node.type)
