@@ -81,7 +81,7 @@ int logicalShift(int x, int n) {
 /*
  * leftBitCount - returns count of number of consective 1's in left-hand (most) end of word.
  *   Examples: leftBitCount(-1) = 32, leftBitCount(0xFFF0F0F0) = 12,
- *             leftBitCount(0x0E0F0F0F) = 4
+ *             leftBitCount(0xFE00FFF0F) = 7
  *   Legal ops: ! ~ & ^ | + << >>
  *   Max ops: 50
  *   Difficulty: 4
