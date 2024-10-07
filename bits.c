@@ -132,7 +132,7 @@ unsigned reverse(unsigned v) {
  *   Difficulty: 3
  */
 int logicalShift(int x, int n) {
-    return 2;
+    return (x >> n) & ~(1 << 31 >> n << 1);
 }
 
 /*
@@ -156,7 +156,21 @@ int leftBitCount(int x) {
  *   Difficulty: 4
  */
 unsigned float_i2f(int x) {
-    return 2;
+    unsigned sign = x & (1 << 31);
+    unsigned exp = 0;
+    unsigned frac = 0;
+    unsigned round = 0;
+    unsigned absX = sign ? (~x + 1) : x;
+    unsigned tmp = absX;
+    while ((tmp = tmp >> 1))
+        ++exp;
+    frac = absX << (31 - exp) << 1;
+    round = frac << 23 >> 23;
+    frac = frac >> 9;
+    if (round > 0xFF + 1) round = 1;
+    else if (round < 0xFF + 1) round = 0;
+    else round = frac & 1;
+    return x ? (sign | ((exp + 0x7F) << 23) | frac) + round : 0;
 }
 
 /*
@@ -197,6 +211,21 @@ unsigned floatScale2(unsigned uf) {
  *   Difficulty: 3
  */
 int float64_f2i(unsigned uf1, unsigned uf2) {
+    // int x,y,ans1;
+    // x=(uf>>23)&0xFF;
+    // y=(uf & 0x007FFFFF)|(1 << 23);
+    // if(x>157)
+    //     return 0x80000000u;
+    // if(x<127)
+    //     return 0;
+    // if(x > 150)
+    //     ans1 = y<<(x-150);
+    // else
+    //     ans1 = y>>(150-x);
+    // if(((uf>>31)&0x1)==1)
+    //     return ~ans1 + 1;
+    // else
+    //     return ans1;
     return 2;
 }
 
