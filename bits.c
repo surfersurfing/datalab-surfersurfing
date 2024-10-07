@@ -26,7 +26,14 @@ int bitXor(int x, int y) {
  *   1 if x and y have the same sign , 0 otherwise.
  */
 int samesign(int x, int y) {
-    return 2;
+        // Check if both x and y are zero
+    if (!x && !y)
+        return 1;
+    // Check if either x or y is zero
+    if (!(x && y))
+        return 0;
+    // Check if x and y have the same sign
+    return !((x ^ y) >> 31);
 }
 
 /*
@@ -38,7 +45,27 @@ int samesign(int x, int y) {
  *   Difficulty: 4
  */
 int logtwo(int v) {
-    return 2;
+    int result = 0;
+
+    // 使用位移与或运算来判断不同的区间，并更新 result
+    result = (v > 0xFFFF) << 4;  // 如果数字大于 16 位，则 result 先累积 16
+    v >>= result;                // 如果大于 16 位，则右移 16 位
+
+    int shift = (v > 0xFF) << 3;  // 如果大于 8 位，则再累积 8
+    result |= shift;
+    v >>= shift;
+
+    shift = (v > 0xF) << 2;  // 如果大于 4 位，则再累积 4
+    result |= shift;
+    v >>= shift;
+
+    shift = (v > 0x3) << 1;  // 如果大于 2 位，则再累积 2
+    result |= shift;
+    v >>= shift;
+
+    result |= (v >> 1);  // 最后检查最高的 1 位
+
+    return result;
 }
 
 /*
@@ -51,7 +78,22 @@ int logtwo(int v) {
  *    Difficulty: 2
  */
 int byteSwap(int x, int n, int m) {
-    return 2;
+    // Step 1: Shift the n and m positions to extract the bytes
+    int n_shift = n << 3;  // n * 8 to get the bit position of nth byte
+    int m_shift = m << 3;  // m * 8 to get the bit position of mth byte
+
+    // Step 2: Extract the nth and mth bytes
+    int nth_byte = (x >> n_shift) & 0xFF;
+    int mth_byte = (x >> m_shift) & 0xFF;
+
+    // Step 3: Clear the nth and mth bytes in the original number
+    int mask = (0xFF << n_shift) | (0xFF << m_shift);
+    x = x & ~mask;
+
+    // Step 4: Insert the bytes in swapped positions
+    x = x | (nth_byte << m_shift) | (mth_byte << n_shift);
+
+    return x;
 }
 
 /*
@@ -63,7 +105,22 @@ int byteSwap(int x, int n, int m) {
  *   Difficulty: 3
  */
 unsigned reverse(unsigned v) {
-    return 2;
+    // Swap odd and even bits
+    v = ((v >> 1) & 0x55555555) | ((v & 0x55555555) << 1);
+
+    // Swap consecutive pairs
+    v = ((v >> 2) & 0x33333333) | ((v & 0x33333333) << 2);
+
+    // Swap nibbles (4 bits)
+    v = ((v >> 4) & 0x0F0F0F0F) | ((v & 0x0F0F0F0F) << 4);
+
+    // Swap bytes
+    v = ((v >> 8) & 0x00FF00FF) | ((v & 0x00FF00FF) << 8);
+
+    // Swap 16-bit halves
+    v = (v >> 16) | (v << 16);
+
+    return v;
 }
 
 /*
@@ -114,7 +171,16 @@ unsigned float_i2f(int x) {
  *   Difficulty: 4
  */
 unsigned floatScale2(unsigned uf) {
-    return 2;
+    int exp = (uf & 0x7f800000) >> 23;
+    int sign = uf & (1 << 31);
+    if (exp == 0)
+        return uf << 1 | sign;
+    if (exp == 255)
+        return uf;
+    exp++;
+    if (exp == 255)
+        return 0x7f800000 | sign;
+    return (exp << 23) | (uf & 0x807fffff);
 }
 
 /*
@@ -148,5 +214,26 @@ int float64_f2i(unsigned uf1, unsigned uf2) {
  *   Difficulty: 4
  */
 unsigned floatPower2(int x) {
-    return 2;
+        unsigned expo;
+    unsigned frac;
+
+    if (x < -149) {
+        return 0;
+    }
+    // denormalizado
+    if (x < -126 && x >= -149) {
+        int corrimiento = (-x - 126);
+        frac = 1 << (23 - corrimiento);
+        return frac;
+    }
+    if (x >= -126 && x <= 127) {
+        expo = (x + 127) << 23;
+        return expo;
+    }
+    if (x > 127) {
+        // infinito
+        return 0xFF << 23;
+        ;
+    }
+    return 0;
 }
