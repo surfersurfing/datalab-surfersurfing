@@ -26,7 +26,7 @@ int bitXor(int x, int y) {
  *   1 if x and y have the same sign , 0 otherwise.
  */
 int samesign(int x, int y) {
-        // Check if both x and y are zero
+    // Check if both x and y are zero
     if (!x && !y)
         return 1;
     // Check if either x or y is zero
@@ -144,7 +144,18 @@ int logicalShift(int x, int n) {
  *   Difficulty: 4
  */
 int leftBitCount(int x) {
-    return 2;
+    int y = ~x;
+    y = y | (y >> 16);
+    y = y | (y >> 8); //causes all non consecutive 1s to disappear
+    y = y | (y >> 4);
+    y = y | (y >> 2);
+    y = y | (y >> 1);
+    y = ~y;
+    return (y & 1) + (y >> 1 & 1) + (y >> 2 & 1) + (y >> 3 & 1) + (y >> 4 & 1) + (y >> 5 & 1) + (y >> 6 & 1) + //counts up every set bit
+    (y >> 7 & 1) + (y >> 8 & 1) + (y >> 9 & 1) + (y >> 10 & 1) + (y >> 11 & 1) + (y >> 12 & 1) + (y >> 13 & 1) +
+    (y >> 14 & 1) + (y >> 15 & 1) + (y >> 16 & 1) + (y >> 17 & 1) + (y >> 18 & 1) + (y >> 19 & 1) + (y >> 20 & 1) +
+    (y >> 21 & 1) + (y >> 22 & 1) + (y >> 23 & 1) + (y >> 24 & 1) + (y >> 25 & 1) + (y >> 26 & 1) + (y >> 27 & 1) + (y >> 28 & 1) +
+    (y >> 29 & 1) + (y >> 30 & 1) + (y >> 31 & 1);
 }
 
 /*
@@ -211,22 +222,26 @@ unsigned floatScale2(unsigned uf) {
  *   Difficulty: 3
  */
 int float64_f2i(unsigned uf1, unsigned uf2) {
-    // int x,y,ans1;
-    // x=(uf>>23)&0xFF;
-    // y=(uf & 0x007FFFFF)|(1 << 23);
-    // if(x>157)
-    //     return 0x80000000u;
-    // if(x<127)
-    //     return 0;
-    // if(x > 150)
-    //     ans1 = y<<(x-150);
-    // else
-    //     ans1 = y>>(150-x);
-    // if(((uf>>31)&0x1)==1)
-    //     return ~ans1 + 1;
-    // else
-    //     return ans1;
-    return 2;
+    int s = (uf2 >> 31) & 1;  // Sign bit
+    int exp = (uf2 >> 20) & 0x7FF;  // Exponent
+    int M1 = uf2 & 0xFFFFF;  // Higher part of the fraction
+    int M2 = uf1 >> 12;  // Lower part of the fraction
+
+    // Check for special cases
+    if (exp == 0x7FF) return 0x80000000;  // NaN or Inf
+    if (exp == 0) return 0;  // Zero
+
+    // Calculate E and M
+    int E = exp - 1023;  // Adjust exponent
+    int M = (M1 << 12) | M2;  // Combine M1 and M2
+    if (E < 0) return 0;  // Underflow
+
+    // Handle overflow
+    if (E >= 32) return 0x80000000;  // Overflow
+
+    // Shift M to the right position and apply the sign
+    if (s) M = -M;  // Apply sign
+    return M >> (E - 31);  // Align to integer
 }
 
 /*
