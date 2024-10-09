@@ -144,18 +144,14 @@ int logicalShift(int x, int n) {
  *   Difficulty: 4
  */
 int leftBitCount(int x) {
-    int y = ~x;
-    y = y | (y >> 16);
-    y = y | (y >> 8); //causes all non consecutive 1s to disappear
-    y = y | (y >> 4);
-    y = y | (y >> 2);
-    y = y | (y >> 1);
-    y = ~y;
-    return (y & 1) + (y >> 1 & 1) + (y >> 2 & 1) + (y >> 3 & 1) + (y >> 4 & 1) + (y >> 5 & 1) + (y >> 6 & 1) + //counts up every set bit
-    (y >> 7 & 1) + (y >> 8 & 1) + (y >> 9 & 1) + (y >> 10 & 1) + (y >> 11 & 1) + (y >> 12 & 1) + (y >> 13 & 1) +
-    (y >> 14 & 1) + (y >> 15 & 1) + (y >> 16 & 1) + (y >> 17 & 1) + (y >> 18 & 1) + (y >> 19 & 1) + (y >> 20 & 1) +
-    (y >> 21 & 1) + (y >> 22 & 1) + (y >> 23 & 1) + (y >> 24 & 1) + (y >> 25 & 1) + (y >> 26 & 1) + (y >> 27 & 1) + (y >> 28 & 1) +
-    (y >> 29 & 1) + (y >> 30 & 1) + (y >> 31 & 1);
+    int cnt = 0;
+    int off = 1&(!(~x));
+    cnt += (!!(~(x>>16)))<<4;
+    cnt += (!!(~(x>>(cnt+8))))<<3;
+    cnt += (!!(~(x>>(cnt+4))))<<2;
+    cnt += (!!(~(x>>(cnt+2))))<<1;
+    cnt += (!!(~(x>>(cnt+1))));
+    return 32+~cnt+off;
 }
 
 /*
@@ -222,14 +218,14 @@ unsigned floatScale2(unsigned uf) {
  *   Difficulty: 3
  */
 int float64_f2i(unsigned uf1, unsigned uf2) {
-    int s = (uf2 >> 31) & 1;  // Sign bit
+    int s = uf2 & 0x80000000;  // Sign
     int exp = (uf2 >> 20) & 0x7FF;  // Exponent
     int M1 = uf2 & 0xFFFFF;  // Higher part of the fraction
     int M2 = uf1 >> 12;  // Lower part of the fraction
 
-    // Check for special cases
-    if (exp == 0x7FF) return 0x80000000;  // NaN or Inf
-    if (exp == 0) return 0;  // Zero
+    // // Check for special cases
+    // if (exp == 0x7FF) return 0x80000000;  // NaN or Inf
+    // if (exp == 0) return 0;  // Zero
 
     // Calculate E and M
     int E = exp - 1023;  // Adjust exponent
@@ -240,7 +236,7 @@ int float64_f2i(unsigned uf1, unsigned uf2) {
     if (E >= 32) return 0x80000000;  // Overflow
 
     // Shift M to the right position and apply the sign
-    if (s) M = -M;  // Apply sign
+    M |= s;
     return M >> (E - 31);  // Align to integer
 }
 
