@@ -224,8 +224,8 @@ int float64_f2i(unsigned uf1, unsigned uf2) {
     int M2 = uf1 >> 12;  // Lower part of the fraction
 
     // // Check for special cases
-    // if (exp == 0x7FF) return 0x80000000;  // NaN or Inf
-    // if (exp == 0) return 0;  // Zero
+    // if (!(exp ^ 0x7FF)) return 0x80000000;  // NaN or Inf
+    // if (!(exp ^ 0)) return 0;  // Zero
 
     // Calculate E and M
     int E = exp - 1023;  // Adjust exponent
