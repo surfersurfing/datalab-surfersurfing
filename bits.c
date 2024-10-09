@@ -145,13 +145,13 @@ int logicalShift(int x, int n) {
  */
 int leftBitCount(int x) {
     int cnt = 0;
-    int off = 1&(!(~x));
-    cnt += (!!(~(x>>16)))<<4;
-    cnt += (!!(~(x>>(cnt+8))))<<3;
-    cnt += (!!(~(x>>(cnt+4))))<<2;
-    cnt += (!!(~(x>>(cnt+2))))<<1;
-    cnt += (!!(~(x>>(cnt+1))));
-    return 32+~cnt+off;
+    int off = 1 & (!(~x));
+    cnt += (!!(~(x >> 16))) << 4;
+    cnt += (!!(~(x >> (cnt + 8)))) << 3;
+    cnt += (!!(~(x >> (cnt + 4)))) << 2;
+    cnt += (!!(~(x >> (cnt + 2)))) << 1;
+    cnt += (!!(~(x >> (cnt + 1))));
+    return 32 + ~cnt + off;
 }
 
 /*
@@ -174,9 +174,12 @@ unsigned float_i2f(int x) {
     frac = absX << (31 - exp) << 1;
     round = frac << 23 >> 23;
     frac = frac >> 9;
-    if (round > 0xFF + 1) round = 1;
-    else if (round < 0xFF + 1) round = 0;
-    else round = frac & 1;
+    if (round > 0xFF + 1)
+        round = 1;
+    else if (round < 0xFF + 1)
+        round = 0;
+    else
+        round = frac & 1;
     return x ? (sign | ((exp + 0x7F) << 23) | frac) + round : 0;
 }
 
@@ -254,7 +257,7 @@ int float64_f2i(unsigned uf1, unsigned uf2) {
  *   Difficulty: 4
  */
 unsigned floatPower2(int x) {
-        unsigned expo;
+    unsigned expo;
     unsigned frac;
 
     if (x < -149) {
