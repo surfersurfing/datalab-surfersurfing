@@ -46,14 +46,17 @@ int logtwo(int v) {
     result = (v > 0xFFFF) << 4;  // 如果 v 大于 16 位
     v >>= result;                // 相应右移
 
-    result |= (v > 0xFF) << 3;  // 如果 v 大于 8 位
-    v >>= (v > 0xFF) << 3;      // 相应右移
+    int tmp = (v > 0xFF) << 3;
+    result |= tmp;              // 如果 v 大于 8 位
+    v >>= tmp;                  // 相应右移
 
-    result |= (v > 0xF) << 2;  // 如果 v 大于 4 位
-    v >>= (v > 0xF) << 2;      // 相应右移
+    tmp = (v > 0xF) << 2;
+    result |= tmp;  // 如果 v 大于 4 位
+    v >>= tmp;      // 相应右移
 
-    result |= (v > 0x3) << 1;  // 如果 v 大于 2 位
-    v >>= (v > 0x3) << 1;      // 相应右移
+    tmp = (v > 0x3) << 1;
+    result |= tmp;  // 如果 v 大于 2 位
+    v >>= tmp;      // 相应右移
 
     return result | (v >> 1);  // 最后检查最高位，加入到结果中
 }
@@ -166,6 +169,19 @@ unsigned float_i2f(int x) {
     // 统计移位次数，即求出 absX 是几位数，存储到 exp
     while ((tmp = tmp >> 1))
         ++exp;
+
+    // 用cnt实现exp计算，会超运算符使用
+    // int cnt = ((tmp >> 16)) << 4;
+    // exp += cnt;
+    // cnt = ((tmp >> (8 + cnt)) != 0) << 3;
+    // exp += cnt;
+    // cnt = ((tmp >> (4 + cnt)) != 0) << 2;
+    // exp += cnt;
+    // cnt = ((tmp >> (2 + cnt)) != 0) << 1;
+    // exp += cnt;
+    // cnt = ((tmp >> (1 + cnt)) != 0);
+    // exp += cnt;
+    
 
     // 计算尾数部分：将 absX 左移以得到尾数
     // 31 - exp 是为了移到最高位，并且再左移 1 位用于精度保留
