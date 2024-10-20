@@ -97,7 +97,7 @@ unsigned reverse(unsigned v) {
 
 [思路来源CSAPP-实验1 Datalab 学习记录 - 简书 (jianshu.com)]([CSAPP-实验1 Datalab 学习记录 - 简书 (jianshu.com)](https://www.jianshu.com/p/50d1bfd5bab7))，如下图：
 
-![image-20241018233141405](C:\Users\75527\AppData\Roaming\Typora\typora-user-images\image-20241018233141405.png)
+![image-20241018233141405](imgs\image-20241018233141405.png)
 
 做出的优化，直接使用mask的16进制形式，减少运算符使用
 
@@ -121,7 +121,7 @@ unsigned reverse(unsigned v) {
 
 [思路来源于《深入理解计算机系统/CSAPP》Data Lab - 知乎 (zhihu.com)]([《深入理解计算机系统/CSAPP》Data Lab - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/57770700))，（**实在是无法再优化**😭）如下图：
 
-![image-20241019231125549](C:\Users\75527\AppData\Roaming\Typora\typora-user-images\image-20241019231125549.png)
+![image-20241019231125549](imgs\image-20241019231125549.png)
 
 #### floatScale2
 
@@ -416,7 +416,7 @@ unsigned float_i2f(int x) {
 
 思路参考于[ICS Datalab - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/395271526)
 
-![image-20241020094455482](C:\Users\75527\AppData\Roaming\Typora\typora-user-images\image-20241020094455482.png)
+![image-20241020094455482](imgs\image-20241020094455482.png)
 
 做出的优化
 
